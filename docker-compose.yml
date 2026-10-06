@@ -1,0 +1,39 @@
+services:
+  regpilot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: regpilot:latest
+    container_name: regpilot
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    volumes:
+      - regpilot-data:/data
+      # Optional: allow local GC via Docker socket (read-only)
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_PORT: ${APP_PORT:-8080}
+      DATABASE_PATH: ${DATABASE_PATH:-/data/regpilot.db}
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-24h}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-change-me-to-32-bytes-secret!!}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080}
+      ENABLE_SWAGGER: ${ENABLE_SWAGGER:-true}
+      REGISTRY_CONTAINER_NAME: ${REGISTRY_CONTAINER_NAME:-}
+      REGISTRY_GC_MODE: ${REGISTRY_GC_MODE:-local}
+      LOGIN_RATE_LIMIT: ${LOGIN_RATE_LIMIT:-10}
+      LOGIN_RATE_WINDOW: ${LOGIN_RATE_WINDOW:-1m}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  regpilot-data:
+    name: regpilot-data

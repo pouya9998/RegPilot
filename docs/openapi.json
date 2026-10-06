@@ -1,0 +1,194 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "RegPilot API",
+    "version": "1.0.0",
+    "description": "REST API for managing Docker Distribution Registry (HTTP API V2)"
+  },
+  "servers": [{ "url": "/api" }],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [{ "BearerAuth": [] }],
+  "paths": {
+    "/health": {
+      "get": {
+        "security": [],
+        "summary": "Health check",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "security": [],
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "JWT token" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Current user",
+        "responses": { "200": { "description": "User" } }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "summary": "Dashboard stats",
+        "responses": { "200": { "description": "Stats" } }
+      }
+    },
+    "/registries": {
+      "get": {
+        "summary": "List registries",
+        "responses": { "200": { "description": "List" } }
+      },
+      "post": {
+        "summary": "Create registry (admin)",
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/registries/{id}": {
+      "get": {
+        "summary": "Get registry",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Registry" } }
+      },
+      "put": {
+        "summary": "Update registry (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "delete": {
+        "summary": "Delete registry (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Deleted" } }
+      }
+    },
+    "/registries/{id}/test": {
+      "post": {
+        "summary": "Test registry connection (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/registries/{id}/health": {
+      "get": {
+        "summary": "Registry health",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Health" } }
+      }
+    },
+    "/registries/{id}/repositories": {
+      "get": {
+        "summary": "List repositories",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Repositories" } }
+      }
+    },
+    "/registries/{id}/tags": {
+      "get": {
+        "summary": "List tags",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "repository", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Tags" } }
+      }
+    },
+    "/registries/{id}/manifests": {
+      "get": {
+        "summary": "Get manifest",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "repository", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "reference", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Manifest" } }
+      }
+    },
+    "/registries/{id}/images": {
+      "delete": {
+        "summary": "Delete image by tag (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Deleted" } }
+      }
+    },
+    "/registries/{id}/gc": {
+      "post": {
+        "summary": "Garbage collection (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "GC result" } }
+      }
+    },
+    "/registries/{id}/cleanup/preview": {
+      "post": {
+        "summary": "Preview retention cleanup (admin)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Preview" } }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List users (admin)",
+        "responses": { "200": { "description": "Users" } }
+      },
+      "post": {
+        "summary": "Create user (admin)",
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "summary": "List audit logs (admin)",
+        "responses": { "200": { "description": "Logs" } }
+      }
+    }
+  }
+}

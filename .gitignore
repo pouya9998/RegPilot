@@ -1,0 +1,49 @@
+# Environment
+.env
+*.env.local
+
+# Data
+/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Go
+backend/bin/
+backend/tmp/
+# Keep vendor for reproducible Docker builds (optional large dep tree)
+# backend/vendor/
+
+*.exe
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build
+dist/
+build/
+*.tar
+
+# Docker
+.docker/
+
+# OS
+Thumbs.db
